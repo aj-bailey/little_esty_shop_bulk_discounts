@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2023_03_02_213813) do
     t.integer "quantity"
     t.float "unit_price"
     t.integer "status"
+    t.float "discount_percentage"
     t.bigint "invoice_id"
     t.bigint "item_id"
     t.datetime "created_at", null: false
