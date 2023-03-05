@@ -75,11 +75,31 @@ describe 'Admin Invoices Index Page' do
       describe "When I visit an admin invoice show page" do
         it "can see the total revenue and total discounted revenue from this invoice" do
           BulkDiscount.create!(merchant: @m1, quantity_threshold: 10, percentage_discount: 50)
+          ii_4 = 
 
           visit admin_invoice_path(@i1)
 
           expect(page).to have_content("Total Revenue: $30.0")
           expect(page).to have_content("Total Discounted Revenue: $18.0")
+        end
+      end
+    end
+  end
+
+  context 'Extension - Storing Discount Percentage on Invoice Item Record' do
+    describe 'As an admin' do
+      describe 'When I visit an admin invoice show page' do
+        it 'can store the bulk discount applied to each invoice_item on invoice when invoice marked as completed' do
+          BulkDiscount.create!(merchant: @m1, quantity_threshold: 10, percentage_discount: 50)
+          ii_4 = InvoiceItem.create!(invoice_id: @i2.id, item_id: @item_1.id, quantity: 5, unit_price: 20, status: 1)
+
+          visit admin_invoice_path(@i2)
+
+          select "completed", from: 'invoice_status'
+          click_button "Update Invoice"
+
+          expect(InvoiceItem.find(@ii_3.id).discount_percentage).to eq(50)
+          expect(InvoiceItem.find(ii_4.id).discount_percentage).to eq(0)
         end
       end
     end
