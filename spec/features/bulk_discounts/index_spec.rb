@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Merchants Bulk Discounts Index" do
   before(:each) do 
+    stub_holidays_request
+    
     @merchant_1 = Merchant.create!(name: 'Hair Care')
   
     @bulk_discount_1 = BulkDiscount.create!(merchant: @merchant_1, quantity_threshold: 5, percentage_discount: 15)
@@ -71,6 +73,19 @@ RSpec.describe "Merchants Bulk Discounts Index" do
 
           expect(current_path).to eq(merchant_bulk_discounts_path(@merchant_1))
           expect(page).to_not have_content("##{@bulk_discount_1.id}")
+        end
+      end
+    end
+  end
+
+  context 'User Story 9' do
+    describe 'As a merchant' do
+      describe 'When I visit the discounts index page' do
+        it 'can see a "Upcoming Holidays" section with the names and dates of the next three US holidays listed' do
+          within("#next_three_holidays") {
+            expect("Good Friday - 2023-04-07").to appear_before("Memorial Day - 2023-05-29")
+            expect("Memorial Day - 2023-05-29").to appear_before("Juneteenth - 2023-06-19")
+          }
         end
       end
     end

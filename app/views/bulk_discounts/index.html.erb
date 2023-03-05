@@ -22,3 +22,12 @@
 </div>
 
 <p><%= link_to "New Discount", new_merchant_bulk_discount_path(@merchant)%></p>
+
+<h3>Upcoming Holidays</h3>
+<div id="next_three_holidays">
+  <ul>
+    <% @holidays.each do |holiday| %>
+      <li><%= holiday.name %> - <%= holiday.date %></li>
+    <% end %>
+  </ul>
+</div>

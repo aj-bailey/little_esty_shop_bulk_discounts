@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'merchant dashboard' do
   before :each do
+    stub_holidays_request
+    
     @merchant1 = Merchant.create!(name: 'Hair Care')
 
     @customer_1 = Customer.create!(first_name: 'Joey', last_name: 'Smith')

@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe "Merchant Bulk Discount Edit Page" do
   before(:each) do
+    stub_holidays_request
+    
     @merchant_1 = Merchant.create!(name: 'Hair Care')
     
     @bulk_discount_1 = BulkDiscount.create!(merchant: @merchant_1, quantity_threshold: 5, percentage_discount: 15)

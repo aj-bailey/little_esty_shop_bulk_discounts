@@ -5,6 +5,7 @@ RSpec.describe Invoice, type: :model do
     it { should validate_presence_of :status }
     it { should validate_presence_of :customer_id }
   end
+
   describe "relationships" do
     it { should belong_to :customer }
     it { should have_many(:items).through(:invoice_items) }
@@ -12,6 +13,7 @@ RSpec.describe Invoice, type: :model do
     it { should have_many :transactions}
     it { should have_many(:bulk_discounts).through(:merchants) }
   end
+  
   describe "instance methods" do
     before(:each) do
       @merchant1 = Merchant.create!(name: 'Hair Care')

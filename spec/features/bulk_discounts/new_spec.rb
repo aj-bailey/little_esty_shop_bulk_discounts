@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Merchant Bulk Discount New Page" do
+  before(:each) do
+    stub_holidays_request
+  end
+  
   context "User Story 2" do
     describe 'As a Merchant' do
       describe 'When I visit the bulk discount new page' do
