@@ -10,4 +10,7 @@ class BulkDiscount < ApplicationRecord
   validates_numericality_of :percentage_discount, less_than: 100
   validates_numericality_of :percentage_discount, greater_than_or_equal_to: 1
 
+  def pending_invoice?
+    self.merchant.invoices.where(status: "in progress").exists?
+  end
 end
