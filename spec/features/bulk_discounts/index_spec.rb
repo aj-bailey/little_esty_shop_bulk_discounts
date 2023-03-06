@@ -90,4 +90,22 @@ RSpec.describe "Merchants Bulk Discounts Index" do
       end
     end
   end
+
+  context 'Extension - bulk discount actions disabled when an invoice is pending' do
+    describe 'As a merchant' do
+      describe 'When I visit my bulk discount show page' do
+        it 'cannot delete a bulk discount with an associated pending invoice' do
+          customer = Customer.create!(first_name: 'Joey', last_name: 'Smith')
+          pending_invoice = Invoice.create!(customer: customer, status: 1)
+          item_1 = Item.create!(name: "Shampoo", description: "This washes your hair", unit_price: 10, merchant_id: @merchant_1.id, status: 1)
+          invoice_item_1 = InvoiceItem.create!(invoice: pending_invoice, item: item_1, quantity: 20, unit_price: 5, status: 1)
+
+          within("#bulk_discount-#{@bulk_discount_3.id}") { click_button "Delete Discount" }
+
+          expect(current_path).to eq(merchant_bulk_discounts_path(@merchant_1))
+          expect(page).to have_content("Unable to Delete Discount: This discount currently belongs to a pending invoice")
+        end
+      end
+    end
+  end
 end
