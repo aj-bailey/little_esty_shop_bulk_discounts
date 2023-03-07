@@ -103,18 +103,21 @@ RSpec.describe 'invoices show' do
   context "User Story 6" do
     describe "As a merchant" do
       describe "When I visit my merchant invoice show page" do
-        it 'can see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation' do
+        before(:each) do
           BulkDiscount.create!(merchant: @merchant1, quantity_threshold: 15, percentage_discount: 15)
           BulkDiscount.create!(merchant: @merchant1, quantity_threshold: 10, percentage_discount: 10)
           BulkDiscount.create!(merchant: @merchant1, quantity_threshold: 5, percentage_discount: 5)
 
-          # other_merchant = Merchant.create!(name: "Other Merchant")
-          # other_merchant_item = Item.create!(name: 'Other Merchant Item', description: "Fixes the repo", unit_price: 10, merchant: other_merchant, status: 1)
-          # invoice_item = InvoiceItem.create!(invoice: @invoice_1, item: other_merchant_item, quantity: 10, unit_price: 10, status: 2)
-          # BulkDiscount.create!(merchant: other_merchant, quantity_threshold: 10, percentage_discount: 10)
-
-
           visit merchant_invoice_path(@merchant1, @invoice_1)
+        end
+
+        it 'can see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation' do
+          expect(page).to have_content("Total Discounted Revenue: 150.3")
+        end
+
+        it 'will only see the total discounted revenue for my merchant if multiple merchants are on the invoice' do
+          InvoiceItem.create!(invoice: @invoice_1, item: @item_5, quantity: 12, unit_price: 6, status: 1)
+          BulkDiscount.create!(merchant: @merchant2, quantity_threshold: 10, percentage_discount: 20)
 
           expect(page).to have_content("Total Discounted Revenue: 150.3")
         end

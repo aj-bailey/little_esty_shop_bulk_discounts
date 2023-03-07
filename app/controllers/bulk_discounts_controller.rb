@@ -1,5 +1,5 @@
 class BulkDiscountsController < ApplicationController
-  before_action :find_merchant, only: [:index, :new, :create, :show, :edit, :update]
+  before_action :find_merchant
   before_action :find_bulk_discount, only: [:destroy, :show, :edit, :update]
   
   def index
@@ -28,6 +28,10 @@ class BulkDiscountsController < ApplicationController
   end
 
   def edit
+    if @bulk_discount.pending_invoice?
+      flash[:notice] = "Unable to Edit Discount: This discount currently belongs to a pending invoice"
+      redirect_to merchant_bulk_discount_path(@merchant, @bulk_discount)
+    end
   end
 
   def update
@@ -44,9 +48,14 @@ class BulkDiscountsController < ApplicationController
   end
 
   def destroy
-    @bulk_discount.destroy
+    if @bulk_discount.pending_invoice?
+      flash[:notice] = "Unable to Delete Discount: This discount currently belongs to a pending invoice"
+      redirect_to merchant_bulk_discounts_path(@merchant)
+    else
+      @bulk_discount.destroy
 
-    redirect_to merchant_bulk_discounts_path(params[:merchant_id])
+      redirect_to merchant_bulk_discounts_path(params[:merchant_id])
+    end
   end
   
   private

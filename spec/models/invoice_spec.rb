@@ -66,16 +66,19 @@ RSpec.describe Invoice, type: :model do
 
         expect(@invoice_1.total_discounted_revenue).to eq(32.4)
       end
+    end
 
-      it 'returns total discounted revenue for invoice_items that are only associated with their merchants bulk discounts' do
+    describe '#total_discounted_merchant_revenue' do
+      it "returns unique discounts for each invoice_item based on their quantity and corresponding discount quantity thresholds" do
         BulkDiscount.create!(merchant: @merchant1, quantity_threshold: 5, percentage_discount: 10)
         BulkDiscount.create!(merchant: @merchant1, quantity_threshold: 10, percentage_discount: 20)
 
         merchant_2 = Merchant.create!(name: 'Beard Care')
         merchant_2_item = Item.create!(name: "Shampoo", description: "This washes your beard hair", unit_price: 10, merchant_id: merchant_2.id, status: 1)
         InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: merchant_2_item.id, quantity: 12, unit_price: 6, status: 1)
+        BulkDiscount.create!(merchant: merchant_2, quantity_threshold: 10, percentage_discount: 20)
 
-        expect(@invoice_1.total_discounted_revenue).to eq(23.4)
+        expect(@invoice_1.total_merchant_discounted_revenue(@merchant1)).to eq(23.4)
       end
     end
   end
